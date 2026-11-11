@@ -4,6 +4,7 @@ import os
 import socket
 import random
 import json
+import re
 
 option_a = os.getenv('OPTION_A', "Cats")
 option_b = os.getenv('OPTION_B', "Dogs")
@@ -19,8 +20,8 @@ def get_redis():
 @app.route("/", methods=['POST','GET'])
 def hello():
     voter_id = request.cookies.get('voter_id')
-    if not voter_id:
-        voter_id = hex(random.getrandbits(64))[2:-1]
+    if not voter_id or not re.fullmatch(r"[0-9a-f]{16}", voter_id):
+        voter_id = f"{random.getrandbits(64):016x}"
 
     vote = None
 
